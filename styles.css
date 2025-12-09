@@ -1,0 +1,18 @@
+* { box-sizing: border-box; }
+body { font-family: Arial, Helvetica, sans-serif; background:#f5f7fb; margin:0; padding:20px; }
+.container { max-width:900px; margin:0 auto; }
+header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.card { background:white; padding:16px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.08); margin-bottom:12px; }
+form { display:flex; gap:8px; flex-wrap:wrap; }
+input { padding:8px 10px; border-radius:6px; border:1px solid #ddd; min-width:180px; }
+button { padding:8px 12px; border-radius:6px; border:none; background:#2563eb; color:white; cursor:pointer; }
+button.secondary { background:#ef4444; }
+ul { list-style:none; padding:0; margin-top:12px; }
+li.todo { display:flex; justify-content:space-between; gap:8px; padding:8px; border-bottom:1px solid #eee; align-items:center; }
+.todo .meta { display:flex; gap:8px; align-items:center; }
+.todo.completed { background:#f0fff4; text-decoration:line-through; }
+.hidden { display:none; }
+#messages { position:fixed; right:20px; bottom:20px; }
+.msg { background:#111827; color:white; padding:8px 12px; border-radius:6px; margin-top:6px; opacity:0.95; }
+footer { margin-top:18px; color:#6b7280; }
+@media (max-width:600px){ .card{padding:12px;} header h1{font-size:18px;} }
