@@ -25,15 +25,15 @@ export function AuthProvider({ children }) {
     setUser({ ...userObj, name: userObj.username || userObj.name });
   };
 
-
-  const register = async (name, email, password) => {
+  // ⭐ CORREGIDO: Cambiar 'name' por 'username'
+  const register = async (username, email, password) => {
     try {
       const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ username, email, password }), // ← Cambiado de 'name' a 'username'
       });
 
       const data = await response.json();
@@ -41,7 +41,7 @@ export function AuthProvider({ children }) {
       if (!response.ok) {
         return {
           success: false,
-          error: data.message || "Error en el registro",
+          error: data.error || data.message || "Error en el registro",
         };
       }
 
@@ -49,13 +49,14 @@ export function AuthProvider({ children }) {
       localStorage.setItem("user", JSON.stringify(data.user));
       setUser(data.user);
 
-      return { success: true };
+      return { success: true, data };
     } catch (error) {
+      console.error("Error en register:", error);
       return { success: false, error: "Error de conexión" };
     }
   };
 
-   const logout = () => {
+  const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setUser(null);
