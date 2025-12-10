@@ -66,9 +66,8 @@ export default function Register() {
 
   return (
     <div className={`min-h-screen flex items-center justify-center px-4 ${
-      isDark 
-        ? 'bg-gradient-to-br from-[#1a1825] via-[#2d2640] to-[#1a1825]' 
-        : 'bg-gradient-to-br from-[#FDF6F0] via-[#F5EBE0] to-[#ECE4D8]'
+
+         'bg-gradient-to-br from-[#1a1825] via-[#2d2640] to-[#1a1825]' 
     }`}>
       <div className={`rounded-3xl shadow-2xl p-8 w-full max-w-md border ${
         isDark
