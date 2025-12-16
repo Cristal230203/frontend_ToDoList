@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import { ToastContext } from '../context/ToastContext';
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 // Iconos SVG personalizados
 const CheckIcon = () => (
@@ -340,31 +342,37 @@ export default function TodoList() {
   const [busqueda, setBusqueda] = useState("");
   const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(true);
-   const { user, logout } = useContext(AuthContext, { username: "Usuario" });  // ✅ Obtener logout
-  const { addToast } = useContext(ToastContext);  // ✅ Opcional para notificación
-  const navigate = useNavigate();  // ✅ Para redirección
+  
+  // Integración con Auth y Navigation
+  const { user, logout } = useContext(AuthContext);
+  const { addToast } = useContext(ToastContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulación de carga de tareas
-    setTimeout(() => {
-      setTareas([
-        {
-          _id: "1",
-          text: "Ejemplo de tarea completada",
-          completed: true,
-          estimatedTime: 30,
-        },
-        {
-          _id: "2",
-          text: "Ejemplo de tarea pendiente con tiempo estimado",
-          completed: false,
-          estimatedTime: 120,
-        },
-        { _id: "3", text: "Otra tarea de ejemplo", completed: false },
-      ]);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    // Cargar tareas desde la API
+    const fetchTareas = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/todos`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setTareas(data);
+        }
+      } catch (error) {
+        console.error('Error al cargar tareas:', error);
+        addToast('Error al cargar las tareas', 'error', 3000);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTareas();
+  }, [addToast]);
 
   const tareasFiltradas = tareas.filter((tarea) =>
     (tarea.text || "").toLowerCase().includes(busqueda.toLowerCase())
@@ -373,7 +381,7 @@ export default function TodoList() {
   const addTarea = (e) => {
     e.preventDefault();
     if (!nuevaTarea.trim()) {
-      alert("Por favor escribe una tarea");
+      addToast("Por favor escribe una tarea", "error", 2000);
       return;
     }
 
@@ -385,6 +393,7 @@ export default function TodoList() {
 
     setTareas([...tareas, newTarea]);
     setNuevaTarea("");
+    addToast("Tarea creada exitosamente", "success", 2000);
   };
 
   const toggleCompleted = (id) => {
@@ -397,6 +406,7 @@ export default function TodoList() {
     setTareas(
       tareas.map((t) => (t._id === id ? { ...t, text: nuevoTexto } : t))
     );
+    addToast("Tarea actualizada", "success", 2000);
   };
 
   const updateTime = (id, timeInMinutes) => {
@@ -405,10 +415,14 @@ export default function TodoList() {
         t._id === id ? { ...t, estimatedTime: timeInMinutes } : t
       )
     );
+    addToast("Tiempo estimado actualizado", "success", 2000);
   };
 
   const deleteTarea = (id) => {
-    setTareas(tareas.filter((t) => t._id !== id));
+    if (confirm("¿Estás seguro de eliminar esta tarea?")) {
+      setTareas(tareas.filter((t) => t._id !== id));
+      addToast("Tarea eliminada", "success", 2000);
+    }
   };
 
   const toggleTheme = () => {
@@ -475,7 +489,7 @@ export default function TodoList() {
                   }`}
                 >
                   Bienvenido,{" "}
-                  <span className="font-semibold">{user.username}</span>
+                  <span className="font-semibold">{user.username || user.email}</span>
                 </p>
               )}
             </div>
@@ -494,8 +508,9 @@ export default function TodoList() {
               <button
                 onClick={() => {
                   if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
-                    logout(); // ✅ Llama a la función del contexto
-                    navigate("/login"); // ✅ Usa navigate, no redirect
+                    logout();
+                    addToast("Sesión cerrada correctamente", "success", 2000);
+                    navigate("/login");
                   }
                 }}
                 className={`px-4 sm:px-6 py-2 font-semibold rounded-lg transition-all duration-200 hover:scale-105 ${
