@@ -20,21 +20,29 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
 
-      try {
-    const result = await login(email, password);  // ✅ Usa la función del contexto
-    
-    if (!result.success) {
-      throw new Error(result.error);
-    }
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-    addToast('✅ ¡Bienvenido!', 'success', 2000);
-    navigate('/todos');
-  } catch (error) {
-    addToast(error.message, 'error', 4000);
-  } finally {
-    setLoading(false);
-  }
-};
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al iniciar sesión');
+      }
+
+      login(data.user, data.token);
+      addToast('✅ ¡Bienvenido!', 'success', 2000);
+      navigate('/todos');
+    } catch (error) {
+      addToast(error.message, 'error', 4000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={`min-h-screen flex items-center justify-center px-4 ${
          'bg-gradient-to-br from-[#1a1825] via-[#2d2640] to-[#1a1825]' 
