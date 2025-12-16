@@ -367,8 +367,8 @@ export default function TodoList() {
     return (
       <div className={`flex justify-center items-center h-screen transition-colors duration-300 ${
         isDark 
-          ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
-          : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
+          ? 'bg-gray-900' 
+          : 'bg-gray-50'
       }`}>
         <div className="text-center">
           <div className={`w-16 h-16 border-4 border-t-transparent rounded-full animate-spin mx-auto mb-4 ${
@@ -385,23 +385,23 @@ export default function TodoList() {
   return (
     <div className={`min-h-screen py-8 px-4 transition-colors duration-300 ${
       isDark
-        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900'
-        : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
+        ? 'bg-gray-900'
+        : 'bg-gray-50'
     }`}>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className={`rounded-xl shadow-xl p-6 mb-8 transition-all duration-300 ${
+        <div className={`rounded-lg shadow-lg p-6 mb-8 transition-all duration-300 ${
           isDark
-            ? 'bg-gray-800 border border-gray-700'
-            : 'bg-white border border-gray-200'
+            ? 'bg-gray-800'
+            : 'bg-white'
         }`}>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className={`text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r ${
+              <h1 className={`text-3xl sm:text-4xl font-bold mb-2 ${
                 isDark 
-                  ? 'from-blue-400 to-purple-400' 
-                  : 'from-indigo-600 to-purple-600'
-              } bg-clip-text text-transparent`}>
+                  ? 'text-white' 
+                  : 'text-gray-900'
+              }`}>
                 Mis Tareas
               </h1>
               {user && (
@@ -413,14 +413,31 @@ export default function TodoList() {
             <div className="flex gap-3">
               <button 
                 onClick={toggleTheme} 
-                className={`p-3 rounded-lg transition-all duration-200 hover:scale-105 shadow-md ${
+                className={`p-3 rounded-lg transition-all duration-200 hover:scale-105 ${
                   isDark
                     ? 'bg-gray-700 hover:bg-gray-600 text-yellow-400'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                 }`}
                 title="Cambiar tema"
               >
                 {isDark ? <SunIcon /> : <MoonIcon />}
+              </button>
+              <button 
+                onClick={() => {
+                  if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                    // Aquí puedes agregar tu lógica de logout
+                    // Por ejemplo: localStorage.removeItem('token');
+                    // window.location.href = '/login';
+                    alert('Sesión cerrada');
+                  }
+                }}
+                className={`px-4 sm:px-6 py-2 font-semibold rounded-lg transition-all duration-200 hover:scale-105 ${
+                  isDark
+                    ? 'bg-red-900/30 text-red-400 hover:bg-red-900/40 border border-red-800'
+                    : 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200'
+                }`}
+              >
+                Cerrar Sesión
               </button>
             </div>
           </div>
@@ -429,8 +446,8 @@ export default function TodoList() {
           <div className={`grid grid-cols-3 gap-3 mt-6 pt-6 border-t ${
             isDark ? 'border-gray-700' : 'border-gray-200'
           }`}>
-            <div className={`text-center p-4 rounded-lg transition-all duration-200 shadow-sm ${
-              isDark ? 'bg-gray-700/50' : 'bg-gray-50'
+            <div className={`text-center p-4 rounded-lg transition-all duration-200 ${
+              isDark ? 'bg-gray-700' : 'bg-gray-100'
             }`}>
               <p className={`text-xs font-medium uppercase tracking-wider mb-1 ${
                 isDark ? 'text-gray-400' : 'text-gray-500'
@@ -443,8 +460,8 @@ export default function TodoList() {
                 {stats.total}
               </p>
             </div>
-            <div className={`text-center p-4 rounded-lg transition-all duration-200 shadow-sm ${
-              isDark ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'
+            <div className={`text-center p-4 rounded-lg transition-all duration-200 ${
+              isDark ? 'bg-gray-700' : 'bg-gray-100'
             }`}>
               <p className={`text-xs font-medium uppercase tracking-wider mb-1 ${
                 isDark ? 'text-green-400' : 'text-green-600'
@@ -457,8 +474,8 @@ export default function TodoList() {
                 {stats.completed}
               </p>
             </div>
-            <div className={`text-center p-4 rounded-lg transition-all duration-200 shadow-sm ${
-              isDark ? 'bg-amber-900/20 border border-amber-800' : 'bg-amber-50 border border-amber-200'
+            <div className={`text-center p-4 rounded-lg transition-all duration-200 ${
+              isDark ? 'bg-gray-700' : 'bg-gray-100'
             }`}>
               <p className={`text-xs font-medium uppercase tracking-wider mb-1 ${
                 isDark ? 'text-amber-400' : 'text-amber-600'
@@ -482,7 +499,7 @@ export default function TodoList() {
               value={nuevaTarea}
               onChange={(e) => setNuevaTarea(e.target.value)}
               placeholder="Escribe una nueva tarea..."
-              className={`flex-1 px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-200 shadow-sm ${
+              className={`flex-1 px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-200 ${
                 isDark
                   ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500'
                   : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500'
@@ -491,10 +508,10 @@ export default function TodoList() {
             />
             <button 
               onClick={addTarea}
-              className={`px-6 sm:px-8 py-3 font-semibold rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 whitespace-nowrap shadow-md ${
+              className={`px-6 sm:px-8 py-3 font-semibold rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 whitespace-nowrap ${
                 isDark
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800'
-                  : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700'
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-indigo-600 text-white hover:bg-indigo-700'
               }`}
             >
               Agregar Tarea
@@ -515,7 +532,7 @@ export default function TodoList() {
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               placeholder="Buscar tareas..."
-              className={`w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-200 shadow-sm ${
+              className={`w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-200 ${
                 isDark
                   ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500'
                   : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500'
@@ -525,10 +542,10 @@ export default function TodoList() {
         </div>
 
         {/* List */}
-        <div className={`rounded-xl shadow-xl overflow-hidden transition-all duration-300 ${
+        <div className={`rounded-lg shadow-lg overflow-hidden transition-all duration-300 ${
           isDark
-            ? 'bg-gray-800 border border-gray-700'
-            : 'bg-white border border-gray-200'
+            ? 'bg-gray-800'
+            : 'bg-white'
         }`}>
           {tareasFiltradas.length === 0 ? (
             <div className="p-12 text-center">
