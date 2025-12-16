@@ -1,17 +1,10 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext();
 
-// Configuración de la API
-const API_CONFIG = {
-  BASE_URL: 'https://todolist-backend-2k8o.onrender.com/api',
-  HEADERS: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  }
-};
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -20,18 +13,26 @@ export const AuthProvider = ({ children }) => {
     const userData = localStorage.getItem('user');
     
     if (token && userData) {
-      setUser(JSON.parse(userData));
+      try {
+        const parsed = JSON.parse(userData);
+        setUser(parsed);
+      } catch (error) {
+        console.error('Error al parsear usuario:', error);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+      }
     }
     setLoading(false);
   }, []);
 
   const login = async (email, password) => {
     try {
-      const response = await fetch(`${API_CONFIG.BASE_URL}/auth/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
-        headers: API_CONFIG.HEADERS,
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ email, password }),
-        credentials: 'include' // Importante para manejar cookies si es necesario
       });
 
       const data = await response.json();
@@ -39,8 +40,7 @@ export const AuthProvider = ({ children }) => {
       if (!response.ok) {
         return { 
           success: false, 
-          error: data.message || 'Error en la autenticación',
-          status: response.status
+          error: data.error || 'Error en la autenticación'
         };
       }
 
@@ -53,21 +53,22 @@ export const AuthProvider = ({ children }) => {
         user: data.user
       };
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Error en login:', error);
       return { 
         success: false, 
-        error: 'No se pudo conectar al servidor. Inténtalo de nuevo más tarde.'
+        error: 'No se pudo conectar al servidor'
       };
     }
   };
 
-  const register = async (name, email, password) => {
+  const register = async (username, email, password) => {
     try {
-      const response = await fetch(`${API_CONFIG.BASE_URL}/auth/register`, {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
-        headers: API_CONFIG.HEADERS,
-        body: JSON.stringify({ name, email, password }),
-        credentials: 'include' // Importante para manejar cookies si es necesario
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await response.json();
@@ -75,8 +76,7 @@ export const AuthProvider = ({ children }) => {
       if (!response.ok) {
         return { 
           success: false, 
-          error: data.message || 'Error en el registro',
-          status: response.status
+          error: data.error || 'Error en el registro'
         };
       }
 
@@ -89,16 +89,16 @@ export const AuthProvider = ({ children }) => {
         user: data.user
       };
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error('Error en register:', error);
       return { 
         success: false, 
-        error: 'No se pudo conectar al servidor. Inténtalo de nuevo más tarde.'
+        error: 'No se pudo conectar al servidor'
       };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');z
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
   };
@@ -114,4 +114,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}

@@ -21,6 +21,14 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ⭐ LOGS DE DEBUG
+    console.log('=== DEBUG REGISTRO ===');
+    console.log('📤 Username:', username);
+    console.log('📤 Email:', email);
+    console.log('📤 Password length:', password.length);
+    console.log('🌐 API_URL:', API_URL);
+    console.log('🔗 URL completa:', `${API_URL}/auth/register`);
+
     if (password !== confirmPassword) {
       addToast('Las contraseñas no coinciden', 'error', 3000);
       return;
@@ -29,13 +37,19 @@ export default function Register() {
     setLoading(true);
 
     try {
+      const bodyData = { username, email, password };
+      console.log('📦 Body a enviar:', JSON.stringify(bodyData));
+
       const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password })
+        body: JSON.stringify(bodyData)
       });
 
+      console.log('📊 Status response:', response.status);
+      
       const data = await response.json();
+      console.log('📥 Respuesta del servidor:', data);
 
       if (!response.ok) {
         throw new Error(data.error || 'Error al registrar');
@@ -58,6 +72,7 @@ export default function Register() {
         navigate('/login');
       }
     } catch (error) {
+      console.error('❌ Error completo:', error);
       addToast(error.message, 'error', 4000);
     } finally {
       setLoading(false);
@@ -66,7 +81,6 @@ export default function Register() {
 
   return (
     <div className={`min-h-screen flex items-center justify-center px-4 ${
-
          'bg-gradient-to-br from-[#1a1825] via-[#2d2640] to-[#1a1825]' 
     }`}>
       <div className={`rounded-3xl shadow-2xl p-8 w-full max-w-md border ${
