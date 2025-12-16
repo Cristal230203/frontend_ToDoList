@@ -4,8 +4,6 @@ import { AuthContext } from '../context/AuthContext';
 import { ToastContext } from '../context/ToastContext';
 import { ThemeContext } from '../context/ThemeContext';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,23 +19,17 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error al iniciar sesión');
+      // ✅ USA LA FUNCIÓN LOGIN DEL CONTEXTO
+      const result = await login(email, password);
+      
+      if (!result.success) {
+        throw new Error(result.error);
       }
 
-      login(data.user, data.token);
       addToast('✅ ¡Bienvenido!', 'success', 2000);
       navigate('/todos');
     } catch (error) {
-      addToast(error.message, 'error', 4000);
+      addToast(error.message || 'Error al iniciar sesión', 'error', 4000);
     } finally {
       setLoading(false);
     }
